@@ -29,7 +29,7 @@ TRAIN:
 TEST:
     TEST_MODEL: "./saved_model/unet-weighted/final"
 SOLVER:
-    NUM_EPOCHS: 18
+    NUM_EPOCHS: 1 # 1 for debug
     LR: 0.01
     LR_POLICY: "poly"
     OPTIMIZER: "sgd"
