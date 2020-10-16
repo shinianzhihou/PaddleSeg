@@ -3,7 +3,7 @@
 dataset_path="$1"
 # cd $dataset_path
 
-if [ ! -n $dataset_path ]; then
+if [ -n $dataset_path ]; then
     cd $dataset_path
 fi
 
