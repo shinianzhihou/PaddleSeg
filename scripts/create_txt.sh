@@ -36,7 +36,7 @@ if [ -f img_testA.zip ]; then
     else
         echo "unzip img_testA.zip..."
         unzip img_testA.zip > /dev/null 2>&1
-        find img_testA -type f | sort > testA_list.txt
+        find img_testA -name "*jpg" -type f | sort > testA_list.txt
         echo "Create testA_list.txt."
     fi
 fi
@@ -47,7 +47,7 @@ if [ -f img_testB.zip ]; then
     else
         echo "unzip img_testB.zip..."
         unzip img_testB.zip > /dev/null 2>&1
-        find img_testB -type f | sort > testB_list.txt
+        find img_testB -name "*jpg" -type f | sort > testB_list.txt
         echo "Create testB_list.txt."
     fi
 fi
