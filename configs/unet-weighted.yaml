@@ -20,7 +20,7 @@ EVAL_CROP_SIZE: (256, 256)
 AUG:
     AUG_METHOD: "unpadding"
     FIX_RESIZE_SIZE: (256, 256)
-BATCH_SIZE: 32
+BATCH_SIZE: 64
 TRAIN:
     PRETRAINED_MODEL_DIR: "./pretrained_model/unet_bn_coco/"
     MODEL_SAVE_DIR: "./saved_model/unet-weighted/"
@@ -30,7 +30,7 @@ TEST:
     TEST_MODEL: "./saved_model/unet-weighted/final"
 SOLVER:
     NUM_EPOCHS: 12
-    LR: 0.01
+    LR: 0.02
     LR_POLICY: "poly"
     OPTIMIZER: "sgd"
     LR_WARMUP: True
