@@ -29,13 +29,13 @@ TRAIN:
 TEST:
     TEST_MODEL: "./saved_model/unet-weighted/final"
 SOLVER:
-    NUM_EPOCHS: 1 # 1 for debug
+    NUM_EPOCHS: 18 # 1 for debug
     LR: 0.01
     LR_POLICY: "poly"
     OPTIMIZER: "sgd"
     LR_WARMUP: True
     LR_WARMUP_STEPS: 2000
-    DECAY_EPOCH: [12,16]
+    DECAY_EPOCH: [15,17]
     LOSS: ["softmax_loss"]
     # LOSS: ["lovasz_softmax_loss","softmax_loss"]
     # LOSS_WEIGHT:
