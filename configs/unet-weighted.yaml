@@ -1,6 +1,6 @@
 # 数据集配置
 DATASET:
-    DATA_DIR: "/home/aistudio/work/dataset"
+    DATA_DIR: "/home/aistudio/data/dataset"
     NUM_CLASSES: 7 
     TRAIN_FILE_LIST: "/home/aistudio/data/dataset/train_list.txt"
     VAL_FILE_LIST: "/home/aistudio/data/dataset/val_list.txt"
