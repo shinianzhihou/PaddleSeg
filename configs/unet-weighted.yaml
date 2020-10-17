@@ -24,18 +24,18 @@ BATCH_SIZE: 32
 TRAIN:
     PRETRAINED_MODEL_DIR: "./pretrained_model/unet_bn_coco/"
     MODEL_SAVE_DIR: "./saved_model/unet-weighted/"
-    RESUME_MODEL_DIR: None
+    RESUME_MODEL_DIR: "./saved_model/unet-weighted/18"
     SNAPSHOT_EPOCH: 1
 TEST:
     TEST_MODEL: "./saved_model/unet-weighted/final"
 SOLVER:
-    NUM_EPOCHS: 18 # 1 for debug
+    NUM_EPOCHS: 30 # 1 for debug
     LR: 0.01
     LR_POLICY: "poly"
     OPTIMIZER: "sgd"
     LR_WARMUP: True
     LR_WARMUP_STEPS: 2000
-    DECAY_EPOCH: [15,17]
+    DECAY_EPOCH: [18,27,29]
     LOSS: ["softmax_loss"]
     # LOSS: ["lovasz_softmax_loss","softmax_loss"]
     # LOSS_WEIGHT:
