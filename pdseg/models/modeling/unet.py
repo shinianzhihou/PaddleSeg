@@ -23,6 +23,12 @@ from utils.config import cfg
 from models.libs.model_libs import scope, name_scope
 from models.libs.model_libs import bn, bn_relu, relu
 from models.libs.model_libs import conv, max_pool, deconv
+from models.unet_backbone.resnet import ResNet as resnet_backbone
+from models.unet_backbone.resnet_vd import ResNet as resnet_vd_backbone
+from models.unet_backbone.se_resnet import SE_ResNet_vd as se_resent_backbone
+from models.unet_backbone.resnet_acnet import ResNetACNet as resnet_acnet_backbone
+from models.unet_backbone.vgg import VGGNet as vgg_backbone
+from models.unet_backbone.hrnet import HRNet as hrnet_backbone
 
 
 def double_conv(data, out_ch):
@@ -95,19 +101,88 @@ def encode(data):
 
 def decode(data, short_cuts):
     # 解码器设置，与编码器对称
+    if cfg.MODEL.UNET.BACKBONE=="":
+        short_shape=[256,128,64,64]
+    else:
+        short_shape=[cut.shape[1] for cut in short_cuts]
     with scope("decode"):
         with scope("decode1"):
-            data = up(data, short_cuts[3], 256)
+            data = up(data, short_cuts[3], short_shape[3])
         with scope("decode2"):
-            data = up(data, short_cuts[2], 128)
+            data = up(data, short_cuts[2], short_shape[2])
         with scope("decode3"):
-            data = up(data, short_cuts[1], 64)
+            data = up(data, short_cuts[1], short_shape[1])
         with scope("decode4"):
-            data = up(data, short_cuts[0], 64)
+            data = up(data, short_cuts[0], short_shape[0])
+            
     return data
 
+def resnet(input):
+    layers= cfg.MODEL.UNET.LAYERS
+    if layers in [18, 34, 50, 101, 152]:
+        pass
+    else:
+        raise Exception("resnet only support layers in [18, 34, 50, 101, 152]")        
+    model = resnet_backbone(layers)
+    decode_shortcuts = model.net(input)
+    data,decode_shortcut=decode_shortcuts[-1],decode_shortcuts[:-1]
+    return data, decode_shortcut
 
-def get_logit(data, num_classes):
+def resnet_vd(input):
+    layers= cfg.MODEL.UNET.LAYERS
+    if layers in [18, 34, 50, 101, 152,200]:
+        pass
+    else:
+        raise Exception("resnet_vd only support layers in [18, 34, 50, 101, 152,200]")        
+    model = resnet_vd_backbone(layers)
+    decode_shortcuts = model.net(input)
+    data,decode_shortcut=decode_shortcuts[-1],decode_shortcuts[:-1]
+    return data, decode_shortcut
+def se_resent(input):
+    layers= cfg.MODEL.UNET.LAYERS
+    if layers in [18, 34, 50, 101, 152,200]:
+        pass
+    else:
+        raise Exception("se_resent only support layers in [18, 34, 50, 101, 152,200]")        
+    model = se_resent_backbone(layers)
+    decode_shortcuts = model.net(input)
+    data,decode_shortcut=decode_shortcuts[-1],decode_shortcuts[:-1]
+    return data, decode_shortcut
+
+def resnet_acnet(input):
+    layers= cfg.MODEL.UNET.LAYERS
+    if layers in [18, 34, 50, 101, 152]:
+        pass
+    else:
+        raise Exception("resnet_acnet only support layers in [18, 34, 50, 101, 152]")        
+    model = resnet_acnet_backbone(layers)
+    decode_shortcuts = model.net(input)
+    data,decode_shortcut=decode_shortcuts[-1],decode_shortcuts[:-1]
+    return data, decode_shortcut
+
+def hrnet(input):
+    layers= cfg.MODEL.UNET.LAYERS
+    if layers in [18, 30, 32, 40, 44, 48, 60, 64]:
+        pass
+    else:
+        raise Exception("hrnet only support layers in [18, 30, 32, 40, 44, 48, 60, 64]")        
+    model = hrnet_backbone(layers)
+    decode_shortcuts = model.net(input)
+    data,decode_shortcut=decode_shortcuts[-1],decode_shortcuts[:-1]
+    return data, decode_shortcut   
+
+def vgg(input):
+    layers= cfg.MODEL.UNET.LAYERS
+    if layers in [11, 13, 16, 19]:
+        pass
+    else:
+        raise Exception("vgg only support layers in [11, 13, 16, 19]")        
+    model = vgg_backbone(layers)
+    decode_shortcuts = model.net(input)
+    data,decode_shortcut=decode_shortcuts[-1],decode_shortcuts[:-1]
+    return data, decode_shortcut
+
+def get_logit(data, num_classes,shape):
     # 根据类别数设置最后一个卷积层输出
     param_attr = fluid.ParamAttr(
         name='weights',
@@ -117,14 +192,40 @@ def get_logit(data, num_classes):
     with scope("logit"):
         data = conv(
             data, num_classes, 3, stride=1, padding=1, param_attr=param_attr)
+        data = fluid.layers.resize_bilinear(data, shape)
     return data
 
-
+#from model.unet_backbone import resnet,resnet_vd,hrnet,se_resent,vgg,resnet_acnet
 def unet(input, num_classes):
     # UNET网络配置，对称的编码器解码器
-    encode_data, short_cuts = encode(input)
+    # Backbone设置：xception 或 mobilenetv2
+    if cfg.MODEL.UNET.BACKBONE=="":
+        encode_data, short_cuts = encode(input)
+
+    elif cfg.MODEL.UNET.BACKBONE =='resnet':
+        encode_data, short_cuts = resnet(input)
+
+    elif cfg.MODEL.UNET.BACKBONE == 'resnet_vd':
+        encode_data, short_cuts  = resnet_vd(input)
+
+    elif  cfg.MODEL.UNET.BACKBONE =='se_resent':
+        encode_data, short_cuts  = se_resent(input)
+
+    elif cfg.MODEL.UNET.BACKBONE == 'resnet_acnet':
+        encode_data, short_cuts  = resnet_acnet(input)
+
+    elif cfg.MODEL.UNET.BACKBONE == 'hrnet':
+        encode_data, short_cuts  = hrnet(input)
+
+    elif cfg.MODEL.UNET.BACKBONE == 'vgg':
+        encode_data, short_cuts  = vgg(input)
+ 
+    else:
+        raise Exception(
+            "unet only support resnet, resnet_vd,resnet_acnet,hrnet,vgg and se_resent backbone")
     decode_data = decode(encode_data, short_cuts)
-    logit = get_logit(decode_data, num_classes)
+    shape=input.shape[2:]
+    logit = get_logit(decode_data, num_classes,shape)
     return logit
 
 
