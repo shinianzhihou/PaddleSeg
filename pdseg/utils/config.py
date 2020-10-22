@@ -225,7 +225,8 @@ cfg.MODEL.DEEPLAB.BACKBONE_LR_MULT_LIST = None
 ########################## UNET模型配置 #######################################
 # 上采样方式, 默认为双线性插值
 cfg.MODEL.UNET.UPSAMPLE_MODE = 'bilinear'
-
+cfg.MODEL.UNET.BACKBONE= ""
+cfg.MODEL.UNET.LAYERS= "50"
 ########################## ICNET模型配置 ######################################
 # RESNET backbone scale 设置
 cfg.MODEL.ICNET.DEPTH_MULTIPLIER = 0.5

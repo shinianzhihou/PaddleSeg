@@ -1,38 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@shinianzhihou 
-PaddlePaddle
-/
-PaddleSeg
-25
-730202
-Code
-Issues
-67
-Pull requests
-2
-Actions
-Projects
-Wiki
-Security
-Insights
-PaddleSeg/pdseg/reader.py /
-@LutaoChu
-LutaoChu fix reader.py no label bug (#501)
-…
-Latest commit 1bc8cda 14 hours ago
- History
- 4 contributors
-@LielinJiang@LutaoChu@nepeplwu@wuyefeilin
-333 lines (290 sloc)  12.8 KB
-
-
 # coding: utf8
 # Copyright (c) 2019 PaddlePaddle Authors. All Rights Reserve.
 #
@@ -366,17 +331,3 @@ class SegDataset(object):
             return (img, grt, ignore)
         elif ModelPhase.is_visual(mode):
             return (img, grt, img_name, valid_shape, org_shape)
-© 2020 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
- Octotree
- Login with GitHub
