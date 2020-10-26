@@ -22,8 +22,8 @@ if [ -f img_train.zip ] && [ -f lab_train.zip ]; then
         find lab_train -type f | sort > train.lab.ccf.tmp
         paste -d " " train.ccf.tmp train.lab.ccf.tmp > all.ccf.tmp
         
-        awk '{if (NR % 50 != 0) print $0}' all.ccf.tmp > train_list.txt
-        awk '{if (NR % 50 == 0) print $0}' all.ccf.tmp > val_list.txt
+        awk '{if (NR % 10 != 0) print $0}' all.ccf.tmp > train_list.txt
+        awk '{if (NR % 10 == 0) print $0}' all.ccf.tmp > val_list.txt
     
         rm *.ccf.tmp
         echo "Create train_list.txt and val_list.txt."
